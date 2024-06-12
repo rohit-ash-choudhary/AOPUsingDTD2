@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Target -->
+    <bean class="sp.com.services.BankTransation" id="objBank"/>
+
+    <!-- Advices inside this class -->
+    <bean class="sp.com.aspects.LoggingAspects" id="objlogASP"/>
+
+    <!-- Pointcut -->
+    <bean class="org.springframework.aop.support.NameMatchMethodPointcut" id="pointcutID">
+        <property name="mappedNames" >
+            <list>
+                <value>transactionUsingUPI</value>
+                <value>transactionUsiwallnet</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Advisor -->
+    <bean class="org.springframework.aop.support.DefaultPointcutAdvisor" id="advisorId">
+        <property name="pointcut" ref="pointcutID"/> 
+        <property name="advice" ref="objlogASP"/>
+    </bean>
+    
+    <!-- Proxy -->
+    <bean id="ProxyID" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="objBank"/>
+        <property name="interceptorNames">
+            <list>
+                <value>advisorId</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>
